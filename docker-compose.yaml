@@ -8,7 +8,7 @@ services:
     command: >
       bash -c "python manage.py migrate
       && python manage.py collectstatic
-      && gunicorn Social_network.wsgi:application --bind 0.0.0.0:8000"
+      && gunicorn django_pg_job.wsgi:application --bind 0.0.0.0:8000"
     restart: unless-stopped
     volumes:
       - static_value:/app/static/
@@ -17,11 +17,20 @@ services:
       - '8000:8000'
     env_file:
       - ./.env
-    environment:
-      - ENV=$ENV_PROD
-      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
     depends_on:
       - db
+
+  nginx:
+    image: nginx:1.25
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./deployment/nginx:/etc/nginx/conf.d
+
+#    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    depends_on:
+      - backend
 
   db:
     container_name: db
@@ -31,10 +40,10 @@ services:
       - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    #    env_file:
-    #      - ./.env
+    env_file:
+      - ./.env
     environment:
-      - POSTGRES_PASSWORD=1234556
+      - POSTGRES_PASSWORD=$PASSWORD
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
 
@@ -57,3 +66,5 @@ services:
 volumes:
   postgres_data:
   pgadmin-data:
+  static_value:
+  media_value:

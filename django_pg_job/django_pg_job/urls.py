@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.template.defaulttags import url
 from django.urls import path, include, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
@@ -13,7 +12,7 @@ urlpatterns = [
 
     # djoser
     re_path(r'^auth/', include('djoser.urls')),
-    re_path(r'^auth/', include('djoser.urls.authtoken')),  # new
+    re_path(r'^auth/', include('djoser.urls.authtoken')),
 
 ]
 

@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     # apps
     'pg_job.apps.PgJobConfig',
 
+    # whitenoise
+    'whitenoise.runserver_nostatic',
+
 ]
 
 MIDDLEWARE = [
@@ -52,6 +55,10 @@ MIDDLEWARE = [
 
     # debug panel
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+
+    # whitenoise
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+
 ]
 
 ROOT_URLCONF = 'django_pg_job.urls'
@@ -77,10 +84,10 @@ WSGI_APPLICATION = 'django_pg_job.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': os.environ.get('ENGINE'),
-        'NAME': 'sobes_job',
+        'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': os.environ.get('PASSWORD'),
-        'HOST': os.environ.get('HOST'),
+        'HOST': os.environ.get('PROD_HOST'),
         'PORT': os.environ.get('PORT'),
     }
 }
@@ -103,9 +110,6 @@ REST_FRAMEWORK = {
     # 'PAGE_SIZE': 10,
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -121,23 +125,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
-USE_TZ = False
+USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+# whitenoise best
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
